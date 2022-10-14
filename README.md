@@ -3,7 +3,8 @@
 #### Tasks to complete
 
 Fork [this repository](https://github.com/bepitome/flutter-file-storage-challenge) and create a new branch with prefix of your github username and challenge name. For example if my github account is `mutairibassam` thus my branch should be like `mutairibassam/basic-authentication`.
----
+
+
 #### Application behaviors:
 - Application should allow the user to create a new profile.
 - Application should allow the user to update his profile.
@@ -19,7 +20,7 @@ Fork [this repository](https://github.com/bepitome/flutter-file-storage-challeng
 
 #### Advance Technical requirements (optional):
 - Application should limit uploaded files size up to 200KB for profile image.
-- Application should limit uploaded files size up to 5MB for resume.
+- Application should limit uploaded files size up to 500KB for resume.
 
 #### Testing:
 - Application should pass all test.
