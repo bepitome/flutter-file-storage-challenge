@@ -12,20 +12,22 @@ Fork [this repository](https://github.com/bepitome/flutter-file-storage-challeng
 - Application should allow the user to upload a new profile image.
 
 #### Technical requirements:
-- Application should use device physical id for backend authentication.
-- Application should use multipart.
-- Application should send binary/base64 data for files.
+- Application should send device physical id for all requests.
+- Application should use multipart for create profile.
+- Application should allow users to update only personal details.
+- Application should allow users to update only resume.
+- Application should allow users to update only profile image.
+- Application should send files as base64.
 - Application should limit resume to .pdf only.
 - Application should limit profile image to [.png, .jpeg, .jpg] only.
 
 #### Advance Technical requirements (optional):
-- Application should limit uploaded files size up to 200KB for profile image.
-- Application should limit uploaded files size up to 500KB for resume.
+- Application should limit uploaded files size up to 250KB for both resume and profile image.
 
 #### Testing:
 - Application should pass all test.
 
-_To download challenge APIs, [click here](https://www.google.com)_
+_To download challenge APIs, [click here](https://documenter.getpostman.com/view/20449209/2s8YCYnvWQ)_
 
 <u>Note: We don’t expect something perfect. Just submit what you can do to evaluate your current skills and take you to the next step.</u>
 
