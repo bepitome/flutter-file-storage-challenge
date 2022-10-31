@@ -17,9 +17,9 @@ class _ProfileState extends State<Profile> {
   UserInformation _user = API.user;
 
   Future<void> _launchUrl() async {
-    var _uri = Uri.parse(_user.resume as String);
-    if (!await launchUrl(_uri)) {
-      throw 'Could not launch $_uri';
+    var uri = Uri.parse(_user.resume as String);
+    if (!await launchUrl(uri)) {
+      throw 'Could not launch $uri';
     }
   }
 

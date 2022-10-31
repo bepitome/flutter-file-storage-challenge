@@ -44,7 +44,7 @@ class API {
 
     var androidInfo = await device.androidInfo;
     if (Platform.isAndroid) {
-      API.physicalID = "123.55.55.123"; //androidInfo.id;
+      API.physicalID = androidInfo.id;
     }
   }
 
@@ -86,9 +86,9 @@ class API {
     var response = await request.send();
     var jsonResponse = await response.stream.toBytes();
     var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
-    print(response.statusCode);
-    print(response.reasonPhrase);
-    print(jsonResponseDecoded);
+    if (jsonResponseDecoded['result']['code'] == 200) {
+      isExist = true;
+    }
   }
 
   static Future updateProfileImage(File image) async {
@@ -115,9 +115,9 @@ class API {
     var response = await request.send();
     var jsonResponse = await response.stream.toBytes();
     var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
-    print(response.statusCode);
-    print(response.reasonPhrase);
-    print(jsonResponseDecoded);
+    if (jsonResponseDecoded['result']['code'] == 200) {
+      return;
+    }
   }
 
   static Future updateProfileResume(File resume) async {
@@ -141,9 +141,9 @@ class API {
     var response = await request.send();
     var jsonResponse = await response.stream.toBytes();
     var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
-    print(response.statusCode);
-    print(response.reasonPhrase);
-    print(jsonResponseDecoded);
+    if (jsonResponseDecoded['result']['code'] == 200) {
+      return;
+    }
   }
 
   static Future getUser() async {
@@ -161,7 +161,6 @@ class API {
       isExist = true;
       var result = jsonResponse['result']["data"];
       user = UserInformation.fromJson(result);
-      print(user.username!.firstName);
       return;
     } else {
       isExist = false;

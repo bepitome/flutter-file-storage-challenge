@@ -35,6 +35,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.5
+  http_parser: ^4.0.2
   url_launcher: ^6.1.6
 
 dev_dependencies:

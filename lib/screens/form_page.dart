@@ -38,7 +38,6 @@ class FormPageState extends State<FormPage> {
           groupValue: select,
           onChanged: (value) {
             setState(() {
-              print(value);
               select = value;
             });
           },
@@ -206,11 +205,6 @@ class FormPageState extends State<FormPage> {
                       setState(() {
                         resume = File(temp.path as String);
                       });
-                      print(temp.name);
-                      print(temp.bytes);
-                      print(temp.size);
-                      print(temp.extension);
-                      print(temp.path);
                     }
                   },
                   child: const Text('Upload CV'),
@@ -230,11 +224,6 @@ class FormPageState extends State<FormPage> {
                       setState(() {
                         profileImage = File(temp.path as String);
                       });
-                      print(temp.name);
-                      print(temp.bytes);
-                      print(temp.size);
-                      print(temp.extension);
-                      print(temp.path);
                     }
                   },
                   child: const Text('Upload Profile Image'),
