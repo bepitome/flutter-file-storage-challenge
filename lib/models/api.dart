@@ -86,7 +86,7 @@ class API {
     var response = await request.send();
     var jsonResponse = await response.stream.toBytes();
     var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
-    if (jsonResponseDecoded['result']['code'] == 200) {
+    if (jsonResponseDecoded['result']['code'] == 201) {
       isExist = true;
     }
   }
