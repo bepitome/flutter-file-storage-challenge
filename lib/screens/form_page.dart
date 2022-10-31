@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_storage/screens/display_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -78,6 +79,7 @@ class FormPageState extends State<FormPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Registration'),
       ),
       body: SingleChildScrollView(
@@ -171,8 +173,8 @@ class FormPageState extends State<FormPage> {
                   ),
                   items: dropdownItems.map((item) {
                     return DropdownMenuItem(
-                      child: Text(item),
                       value: item,
+                      child: Text(item),
                     );
                   }).toList(),
                   onChanged: (value) {
@@ -239,14 +241,22 @@ class FormPageState extends State<FormPage> {
                 ),
                 profileImage == null
                     ? const Text("Upload Image")
-                    : Container(
+                    : SizedBox(
                         height: 200,
                         width: 200,
                         child: Image.file(profileImage!),
                       ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      if (select == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please Select Gender'),
+                          ),
+                        );
+                        return;
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Processing Data'),
@@ -263,8 +273,19 @@ class FormPageState extends State<FormPage> {
                         }""";
                       data = data.replaceAll("\n", "");
                       data = data.replaceAll("  ", "");
-                      API.createProfile(
-                          data, profileImage as File, resume as File);
+                      await API.createProfile(
+                          data,
+                          profileImage == null ? null : profileImage as File,
+                          resume == null ? null : resume as File);
+                      await API.getUser();
+                      setState(() {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const Profile(),
+                          ),
+                        );
+                      });
                     }
                   },
                   child: const Text('Submit'),

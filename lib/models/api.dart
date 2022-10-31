@@ -1,28 +1,28 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:file_storage/models/user_information.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+import "package:http_parser/http_parser.dart";
 
 class API {
   // =================== API ===================
-  static const String BASE_URL = 'http://143.244.145.16/api/v1/';
-  static const String CREATE_USER = BASE_URL + 'user/create';
-  static const String GET_USER = BASE_URL + 'user/profile';
-  static const String GET_QUALIFICATION = BASE_URL + 'user/qualifications';
-  static const String UPDATE_PROFILE_IMAGE = BASE_URL + 'user/update-image';
-  static const String UPDATE_PROFILE_RESUME = BASE_URL + '/user/update-resume';
-
+  static const String baseURL = 'http://143.244.145.16/api/v1/';
+  static const String createUser = '${baseURL}user/create';
+  static const String getUserUrl = '${baseURL}user/profile';
+  static const String getQualificationUrl = '${baseURL}user/qualifications';
+  static const String updateProfileImageUrl = '${baseURL}user/update-image';
+  static const String updateProfileResumeUrl = '${baseURL}user/update-resume';
+  static bool isExist = false;
   static String physicalID = "";
+  static UserInformation user = UserInformation();
 
   // =================== Methods ===================
   // Get Qualifications
   static Future<List<String>> getQualifications() async {
     await getPhysicalID();
     var response = await http.get(
-      Uri.parse(GET_QUALIFICATION),
+      Uri.parse(getQualificationUrl),
       headers: {
         'Content-Type': 'multipart/form-data',
         'Accept': '*/*',
@@ -44,19 +44,19 @@ class API {
 
     var androidInfo = await device.androidInfo;
     if (Platform.isAndroid) {
-      API.physicalID = androidInfo.id;
+      API.physicalID = "123.55.55.123"; //androidInfo.id;
     }
   }
 
-  static Future createProfile(String data, File image, File resume) async {
+  static Future createProfile(String data, File? image, File? resume) async {
     var request = http.MultipartRequest(
       'PUT',
-      Uri.parse(CREATE_USER),
+      Uri.parse(createUser),
     );
     request.headers.addAll({
       'Content-Type': 'multipart/form-data; boundary=123',
       'Accept': '*/*',
-      'x-physical-id': "7577.252992.3232.32322",
+      'x-physical-id': physicalID,
     });
 
     request.fields.addAll(
@@ -64,24 +64,28 @@ class API {
         "data": data,
       },
     );
-
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'files',
-        image.path,
-      ),
-    );
-
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'files',
-        resume.path,
-      ),
-    );
+    if (image != null) {
+      String filetype = image.path.split("/").last.split(".").last;
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'files',
+          image.path,
+          contentType: MediaType('image', filetype),
+        ),
+      );
+    }
+    if (resume != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'files',
+          resume.path,
+        ),
+      );
+    }
 
     var response = await request.send();
-    var jsonReponse = await response.stream.toBytes();
-    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonReponse));
+    var jsonResponse = await response.stream.toBytes();
+    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
     print(response.statusCode);
     print(response.reasonPhrase);
     print(jsonResponseDecoded);
@@ -90,26 +94,27 @@ class API {
   static Future updateProfileImage(File image) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(UPDATE_PROFILE_IMAGE),
+      Uri.parse(updateProfileImageUrl),
     );
     request.headers.addAll({
       'Content-Type': 'multipart/form-data;',
-      'Accept': '/',
-      'x-physical-id': "22222.32222.3232.32322",
+      'Accept': '*/*',
+      'x-physical-id': physicalID,
     });
 
-    var imageLength = await image.length();
+    String filetype = image.path.split("/").last.split(".").last;
+
     request.files.add(
-      http.MultipartFile(
-        "image",
-        image.readAsBytes().asStream(),
-        imageLength,
+      await http.MultipartFile.fromPath(
+        'file',
+        image.path,
+        contentType: MediaType('image', filetype),
       ),
     );
 
     var response = await request.send();
-    var jsonReponse = await response.stream.toBytes();
-    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonReponse));
+    var jsonResponse = await response.stream.toBytes();
+    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
     print(response.statusCode);
     print(response.reasonPhrase);
     print(jsonResponseDecoded);
@@ -118,26 +123,24 @@ class API {
   static Future updateProfileResume(File resume) async {
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse(UPDATE_PROFILE_RESUME),
+      Uri.parse(updateProfileResumeUrl),
     );
     request.headers.addAll({
       'Content-Type': 'multipart/form-data;',
-      'Accept': '/',
-      'x-physical-id': "22222.322222.3232.32322",
+      'Accept': '*/*',
+      'x-physical-id': physicalID,
     });
-
-    var resumeLength = await resume.length();
     request.files.add(
-      http.MultipartFile(
-        "cv",
-        resume.readAsBytes().asStream(),
-        resumeLength,
+      await http.MultipartFile.fromPath(
+        'file',
+        resume.path,
+        contentType: MediaType('application', "pdf"),
       ),
     );
 
     var response = await request.send();
-    var jsonReponse = await response.stream.toBytes();
-    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonReponse));
+    var jsonResponse = await response.stream.toBytes();
+    var jsonResponseDecoded = jsonDecode(utf8.decode(jsonResponse));
     print(response.statusCode);
     print(response.reasonPhrase);
     print(jsonResponseDecoded);
@@ -146,7 +149,7 @@ class API {
   static Future getUser() async {
     await getPhysicalID();
     var response = await http.get(
-      Uri.parse(GET_USER),
+      Uri.parse(getUserUrl),
       headers: {
         'Content-Type': 'multipart/form-data',
         'Accept': '*/*',
@@ -154,7 +157,15 @@ class API {
       },
     );
     var jsonResponse = jsonDecode(response.body);
-    var result = jsonResponse['result']["data"];
-    return result;
+    if (jsonResponse["result"]["code"] == 200) {
+      isExist = true;
+      var result = jsonResponse['result']["data"];
+      user = UserInformation.fromJson(result);
+      print(user.username!.firstName);
+      return;
+    } else {
+      isExist = false;
+      return null;
+    }
   }
 }
