@@ -1,6 +1,6 @@
 {
-    "name": "flutter_file_storage_challenge",
-    "short_name": "flutter_file_storage_challenge",
+    "name": "file_storage",
+    "short_name": "file_storage",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_file_storage_challenge">
+    package="com.example.file_storage">
    <application
-        android:label="flutter_file_storage_challenge"
+        android:label="file_storage"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
