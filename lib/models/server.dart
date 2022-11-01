@@ -1,14 +1,13 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_file_storage_challenge/models/person.dart';
-import 'package:path/path.dart';
-import 'package:async/async.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// ignore: depend_on_referenced_packages
 import "package:http_parser/http_parser.dart";
 
 class API {
-  static final String baseUrl = 'http://143.244.145.16/api/v1/user';
+  static const String baseUrl = 'http://143.244.145.16/api/v1/user';
   static String physicalID = '';
   static bool here = false;
   static List<String> qualifications = [];
@@ -27,10 +26,8 @@ class API {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         data = data["result"]["data"]["qualifications"] as List;
-        print(data);
+
         return data;
-      } else {
-        print(response.statusCode);
       }
     } catch (e) {
       throw Exception(e.toString());
@@ -43,8 +40,6 @@ class API {
     var iosInfo = await device.iosInfo;
     if (Platform.isIOS) {
       API.physicalID = iosInfo.identifierForVendor as String;
-
-      ;
     }
   }
 
@@ -56,13 +51,12 @@ class API {
       'Accept': '*/*',
       'x-physical-id': physicalID,
     });
-    // request.fields['data'] = data;
+
     request.fields.addAll(
       {
         "data": data,
       },
     );
-    // add multipart from file
 
     if (pdf != null) {
       request.files.add(
@@ -75,7 +69,6 @@ class API {
     }
     if (image != null) {
       String filetype = image.path.split("/").last.split(".").last;
-      print(filetype);
       request.files.add(
         await http.MultipartFile.fromPath(
           'files',

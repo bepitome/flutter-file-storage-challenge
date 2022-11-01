@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_file_storage_challenge/home_screen.dart';
+import 'package:flutter_file_storage_challenge/screens/home_screen.dart';
 import 'package:flutter_file_storage_challenge/models/server.dart';
-import 'package:flutter_file_storage_challenge/profile_screen.dart';
+import 'package:flutter_file_storage_challenge/screens/profile_screen.dart';
 
 void main() {
   runApp(const MyApp());

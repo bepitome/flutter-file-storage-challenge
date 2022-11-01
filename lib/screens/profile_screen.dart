@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_file_storage_challenge/models/server.dart';
-import 'package:flutter_file_storage_challenge/profile_screen.dart';
-// import 'package:open_file/open_file.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_file_storage_challenge/models/person.dart';
-import 'package:flutter_file_storage_challenge/models/server.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -142,6 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: OutlinedButton(
                           onPressed: () async {
+                            // ignore: deprecated_member_use
                             var pickedImage = await imagePicker.getImage(
                               source: ImageSource.gallery,
                             );

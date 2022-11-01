@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_file_storage_challenge/models/server.dart';
-import 'package:flutter_file_storage_challenge/profile_screen.dart';
-// import 'package:open_file/open_file.dart';
+import 'package:flutter_file_storage_challenge/screens/profile_screen.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -23,9 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController ageController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
   TextEditingController qualificationController = TextEditingController();
-  String? genderGroup;
-  String? gender1;
-  String dropdownvalue = '1';
+  String dropDownValue = '1';
   File? image;
   FilePicker? file;
   File? pdf;
@@ -45,23 +42,17 @@ class _HomeScreenState extends State<HomeScreen> {
       allowedExtensions: ['pdf'],
     );
     if (result != null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Uploading')));
       PlatformFile temp = result.files.first;
       setState(() {
         pdf = File(temp.path as String);
       });
-      print(temp.name);
-      print(temp.bytes);
-      print(temp.size);
-      print(temp.extension);
-      print(temp.path);
     }
   }
 
   var items = ["select qualification"];
   Future getDropMenu() async {
-    var data = await API.getQualifications();
+    // need to remove one
+    // var data = await API.getQualifications();
     var qualifications = await API.getQualifications();
     List<String> temp = [];
     for (var i in qualifications) {
@@ -69,7 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
         temp.add(i["name"]);
       }
     }
-    print(items);
     setState(() {
       items = temp;
     });
@@ -82,14 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         image = File(pickedImage.path);
       });
-    } else {
-      print('No image selected');
     }
-    print(image);
   }
 
   List gender = ["Male", "Female", "N/D"];
-  String select = "";
+  String genderValue = "";
   Row addRadioButton(int btnValue, String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -97,11 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
         Radio(
           activeColor: Theme.of(context).primaryColor,
           value: gender[btnValue],
-          groupValue: select,
+          groupValue: genderValue,
           onChanged: (value) {
             setState(() {
-              print(value);
-              select = value;
+              genderValue = value;
             });
           },
         ),
@@ -227,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    dropdownvalue = value.toString();
+                    dropDownValue = value.toString();
                   });
                 },
               ),
@@ -243,21 +229,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ElevatedButton(
                 onPressed: uploadImage,
-                child: Text('Upload Image'),
+                child: const Text('Upload Image'),
               ),
               const SizedBox(
                 height: 20,
               ),
               ElevatedButton(
                 onPressed: _pickFile,
-                child: Text('Upload CV'),
+                child: const Text('Upload CV'),
               ),
               const SizedBox(
                 height: 20,
               ),
               ElevatedButton(
                 onPressed: () async {
-                  if (select == "") {
+                  if (genderValue == "") {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please Select Gender'),
@@ -270,10 +256,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         """{"national_id": "${nationalIdController.text}",
                         "username": {"first_name": "${firstNameController.text}" ,"last_name": "${lastNameController.text}"},
                         "email": "${emailController.text}",
-                        "gender": "$select",
+                        "gender": "$genderValue",
                         "age": "${ageController.text}",
                         "mobile": "${mobileController.text}",
-                        "qualification": "$dropdownvalue"
+                        "qualification": "$dropDownValue"
                         }""";
                     data = data.replaceAll("\n", "");
                     data = data.replaceAll("  ", "");
