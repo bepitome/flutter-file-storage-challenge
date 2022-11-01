@@ -142,16 +142,30 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
                             if (pickedImage != null) {
                               File image = File(pickedImage.path);
-                              await API.updateProfileImage(image);
-                              await API.getUser();
-                              setState(() {
-                                user = API.user;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Image Updated'),
-                                  ),
-                                );
-                              });
+                              int imageLength = await image.length();
+                              if (imageLength > 250000) {
+                                setState(() {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Image size must be less than 250kb'),
+                                    ),
+                                  );
+                                  return;
+                                });
+                              } else {
+                                await API.updateProfileImage(image);
+                                await API.getUser();
+                                setState(() {
+                                  user = API.user;
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Image Updated'),
+                                    ),
+                                  );
+                                  return;
+                                });
+                              }
                             }
                           },
                           child: const Text('Edit Profile Picture'),

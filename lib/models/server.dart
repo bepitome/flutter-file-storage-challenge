@@ -37,9 +37,13 @@ class API {
   static Future getPhysicalID() async {
     var device = DeviceInfoPlugin();
 
-    var iosInfo = await device.iosInfo;
     if (Platform.isIOS) {
-      API.physicalID = iosInfo.identifierForVendor as String;
+      var iosInfo = await device.iosInfo;
+      physicalID = iosInfo.identifierForVendor as String;
+    }
+    if (Platform.isAndroid) {
+      var androidInfo = await device.androidInfo;
+      physicalID = androidInfo.id;
     }
   }
 
@@ -57,6 +61,7 @@ class API {
         "data": data,
       },
     );
+    // multiform request
 
     if (pdf != null) {
       request.files.add(

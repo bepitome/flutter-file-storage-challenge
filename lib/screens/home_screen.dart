@@ -27,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   FilePicker? file;
   File? pdf;
   final imagePicker = ImagePicker();
+  int? imageLength;
+  int? pdfLength;
+  String? pdfName;
+  bool imageUploaded = false;
 
   void showSnackBar(BuildContext context, String text) {
     final snackBar = SnackBar(
@@ -43,9 +47,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     if (result != null) {
       PlatformFile temp = result.files.first;
-      setState(() {
-        pdf = File(temp.path as String);
-      });
+      if (temp.size > 250000) {
+        // ignore: use_build_context_synchronously
+        showSnackBar(context, 'CV size must be less than 250kb');
+        return;
+      } else {
+        setState(() {
+          pdf = File(temp.path as String);
+          pdfLength = temp.size;
+          pdfName = temp.name;
+        });
+      }
     }
   }
 
@@ -68,11 +80,27 @@ class _HomeScreenState extends State<HomeScreen> {
   Future uploadImage() async {
     // ignore: deprecated_member_use
     var pickedImage = await imagePicker.getImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        image = File(pickedImage.path);
-      });
+    String imageType = pickedImage!.path.split("/").last.split(".").last;
+    image = File(pickedImage.path);
+
+    imageLength = await image!.length();
+    if (imageType != "png" && imageType != "jpeg" && imageType != "jpg") {
+      // ignore: use_build_context_synchronously
+      showSnackBar(context, "Image type must be png or jpeg or jpg");
+      image = null;
+      return;
     }
+    if (imageLength! > 250000) {
+      // ignore: use_build_context_synchronously
+      showSnackBar(context, "Image size must be less than 250kb");
+      image = null;
+
+      return;
+    }
+    setState(() {
+      image = File(pickedImage.path);
+      imageUploaded = true;
+    });
   }
 
   List gender = ["Male", "Female", "N/D"];
@@ -231,6 +259,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: uploadImage,
                 child: const Text('Upload Image'),
               ),
+              imageUploaded
+                  ? const Center(child: Text("Image Uploaded"))
+                  : const Center(child: Text("No Image selected")),
               const SizedBox(
                 height: 20,
               ),
@@ -238,6 +269,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: _pickFile,
                 child: const Text('Upload CV'),
               ),
+              pdfName == null
+                  ? const Center(child: Text("no file selected"))
+                  : Center(child: Text(pdfName as String)),
               const SizedBox(
                 height: 20,
               ),
@@ -247,6 +281,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Please Select Gender'),
+                      ),
+                    );
+                    return;
+                  }
+                  if ((imageLength! + pdfLength!) > 250000) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content:
+                            Text('Image and CV size must be less than 250kb'),
                       ),
                     );
                     return;
